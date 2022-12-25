@@ -1,68 +1,74 @@
 import React, { useState } from 'react';
 import { Container, Label, Input, Button } from './Form.styled';
+import { useDispatch, useSelector } from 'react-redux';
+import { getContact } from 'redux/selectors';
+import { addContact } from 'redux/sliceContact';
+import { nanoid } from 'nanoid';
 
-export default function Form({ onSubmit }) {
-  const [data, setData] = useState({
-    name: '',
-    number: '',
-  });
+export const Form = () => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+  const contacts = useSelector(getContact);
 
-  const handleChange = e => {
-    const { name, value } = e.currentTarget;
-
-    setData({
-      ...data,
-      [name]: value,
-    });
-  };
+  const dispatch = useDispatch();
 
   const handleSubmit = e => {
     e.preventDefault();
-    console.log(data);
-    onSubmit(data);
+    const correctName = name.toLowerCase();
+    const IsContactList = contacts.find(
+      contact => contact.name.toLowerCase() === correctName
+    );
 
-    reset();
+    IsContactList
+      ? alert(`${name} is already in contacts`)
+      : dispatch(addContact({ name, number, id: nanoid() }));
+    if (!IsContactList) {
+      setName('');
+      setNumber('');
+    }
+  };
+  const handleChange = e => {
+    console.log(e.target.value);
+    switch (e.target.name) {
+      case 'name':
+        setName(e.target.value);
+        break;
+      case 'number':
+        setNumber(e.target.value);
+        break;
+      default:
+        console.log('Invalid subscription type');
+    }
   };
 
-  const reset = () => {
-    setData({ name: '', number: '' });
-  };
+  const modelId = nanoid();
+  const numberId = nanoid();
 
   return (
-    <Container
-      // onSubmit={evt => {
-      //   evt.preventDefault();
-      //   onSubmit(data.userName, data.number);
-      //   reset();
-      // }}
-
-      onSubmit={handleSubmit}
-    >
-      <Label>
-        Name
-        <Input
-          value={data.name}
-          onChange={handleChange}
-          type="text"
-          name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-          title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-          required
-        />
-      </Label>
-      <Label>
-        Number
-        <Input
-          value={data.number}
-          onChange={handleChange}
-          type="tel"
-          name="number"
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-          title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required
-        />
-      </Label>
+    <Container autoComplete="off" onSubmit={handleSubmit}>
+      <Label htmlFor={modelId}>Name</Label>
+      <Input
+        type="text"
+        name="name"
+        pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+        title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+        required
+        onChange={handleChange}
+        value={name}
+        id={modelId}
+      />
+      <Label htmlFor={numberId}>Number</Label>
+      <Input
+        type="tel"
+        name="number"
+        pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+        title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
+        required
+        onChange={handleChange}
+        value={number}
+        id={numberId}
+      />
       <Button type="submit">Add contact</Button>
     </Container>
   );
-}
+};

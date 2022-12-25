@@ -5,15 +5,13 @@ const Container = styled.form`
   display: block;
   padding: 20px;
   width: 250px;
-  height: 200px;
+  height: 250px;
 `;
 
 const Label = styled.label`
   display: block;
   height: 20px;
-  &:not(:last-child) {
-    margin-bottom: 65px;
-  }
+  margin-bottom: 20px;
 `;
 
 const Input = styled.input`
@@ -21,6 +19,7 @@ const Input = styled.input`
   height: 25px;
   font-size: 18px;
   margin-top: 5px;
+  margin-bottom: 20px;
 
   &:focus {
     outline: none;
@@ -30,7 +29,6 @@ const Input = styled.input`
 `;
 
 const Button = styled.button`
-  width: 100px;
   height: 25px;
   border-radius: 5px;
   cursor: pointer;
